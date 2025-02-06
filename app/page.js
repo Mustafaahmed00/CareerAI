@@ -10,6 +10,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import HeroSection from "@/components/hero";
+import CTAButton from "@/components/CTAButton";
 import {
   Accordion,
   AccordionContent,
@@ -20,8 +21,21 @@ import { features } from "@/data/features";
 import { faqs } from "@/data/faqs";
 import { howItWorks } from "@/data/howItWorks";
 import Testimonials from '@/data/testimonial';
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from 'next/navigation'; // Import redirect for navigation
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const { userId } = await auth(); // Get user authentication status on the server
+
+  const handleStartJourneyClick = () => {
+    if (userId) {
+      // User is logged in, redirect to dashboard
+      redirect('/dashboard');
+    } else {
+      // User is NOT logged in, redirect to sign-in
+      redirect('/sign-in');
+    }
+  };
   return (
     <>
       <div className="grid-background"></div>
@@ -148,15 +162,7 @@ export default function LandingPage() {
               Join thousands of professionals who are advancing their careers
               with AI-powered guidance.
             </p>
-            <Link href="/dashboard" passHref>
-              <Button
-                size="lg"
-                variant="secondary"
-                className="h-11 mt-5 animate-bounce"
-              >
-                Start Your Journey Today <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
+            <CTAButton />
           </div>
         </div>
       </section>
