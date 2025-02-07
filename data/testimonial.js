@@ -26,7 +26,7 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="py-16 bg-gradient-to-b from-white to-gray-50">
+    <section className="w-full py-12 md:py-24 bg-muted/50">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-12 text-black">
           Success Stories
@@ -36,7 +36,7 @@ export default function Testimonials() {
           {testimonials.map((item, index) => (
             <div 
               key={index} 
-              className="bg-white p-6 rounded-xl border border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-300"
+              className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-100 dark:border-gray-700"
             >
               <div className="mb-4">
                 <span className="inline-block px-3 py-1 text-sm font-medium text-blue-600 bg-blue-50 rounded-full">
