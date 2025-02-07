@@ -2,10 +2,30 @@
 import { SpeechClient } from '@google-cloud/speech';
 import { NextResponse } from 'next/server';
 
-const client = new SpeechClient({
-  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS
-});
-
+const getGCPCredentials = () => {
+    if (process.env.GCP_PRIVATE_KEY) {
+      // For Vercel (Production)
+      return {
+        credentials: {
+          client_email: process.env.GCP_SERVICE_ACCOUNT_EMAIL,
+          private_key: process.env.GCP_PRIVATE_KEY.replace(/\\n/g, '\n'), // Fix newlines for private key
+        },
+        projectId: process.env.GCP_PROJECT_ID,
+      };
+    } else if (process.env.NODE_ENV === 'development') {
+      // For Local Development
+      return {
+        keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS, // Path to JSON file in local dev
+      };
+    } else {
+      throw new Error('Missing Google Cloud credentials');
+    }
+  };
+  
+  // Initialize the SpeechClient with the appropriate credentials
+  const gcpCredentials = getGCPCredentials();
+  const client = new SpeechClient(gcpCredentials);
+  
 export async function POST(req) {
   try {
     const body = await req.json();
