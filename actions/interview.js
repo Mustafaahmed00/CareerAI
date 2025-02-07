@@ -262,47 +262,52 @@ export async function generateAIQuestion() {
   }
   
   export async function saveAIInterviewResult(questions, answers, evaluations) {
+    // Get the current user
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
   
     const user = await db.user.findUnique({
       where: { clerkUserId: userId },
     });
-  
     if (!user) throw new Error("User not found");
   
-    // Calculate detailed metrics
+    // Calculate overall, technical, and communication scores from evaluation metrics
     const overallScore = evaluations.reduce((acc, ev) => acc + ev.score, 0) / evaluations.length;
-    const technicalAccuracy = evaluations.reduce((acc, ev) => acc + (ev.technicalAccuracy || 0), 0) / evaluations.length;
+    const technicalScore = evaluations.reduce((acc, ev) => acc + (ev.technicalAccuracy || 0), 0) / evaluations.length;
     const communicationScore = evaluations.reduce((acc, ev) => acc + (ev.communicationClarity || 0), 0) / evaluations.length;
   
+    // Create an array to store detailed question results
     const questionResults = questions.map((q, index) => ({
       question: q.question,
       type: q.type,
       userAnswer: answers[index],
       evaluation: {
-        ...evaluations[index],
+        // Use defaults if any key is missing
         score: evaluations[index].score || 0,
         technicalAccuracy: evaluations[index].technicalAccuracy || 0,
         communicationClarity: evaluations[index].communicationClarity || 0,
-        completeness: evaluations[index].completeness || 0
+        completeness: evaluations[index].completeness || 0,
+        detailedFeedback: evaluations[index].detailedFeedback || "",
+        keyStrengths: evaluations[index].keyStrengths || [],
+        improvementAreas: evaluations[index].improvementAreas || [],
+        modelAnswer: evaluations[index].modelAnswer || ""
       }
     }));
   
-    // Collect strengths and areas for improvement
+    // Aggregate feedback: unique strengths and areas for improvement
     const allStrengths = evaluations.flatMap(ev => ev.strengths || []);
     const allAreasForImprovement = evaluations.flatMap(ev => ev.areasForImprovement || []);
-  
-    // Get unique feedback points
     const uniqueStrengths = [...new Set(allStrengths)].slice(0, 3);
     const uniqueAreasForImprovement = [...new Set(allAreasForImprovement)].slice(0, 3);
   
     try {
+      // Save the assessment record to the database.
+      // Note: Make sure your Prisma schema has the technicalScore column.
       const assessment = await db.assessment.create({
         data: {
           userId: user.id,
           quizScore: overallScore,
-          technicalScore: technicalAccuracy,
+          technicalScore: technicalScore,   // Maps average technical accuracy to database column
           communicationScore: communicationScore,
           questions: questionResults,
           category: "AI Interview",
@@ -318,6 +323,7 @@ export async function generateAIQuestion() {
       throw new Error("Failed to save interview result");
     }
   }
+  
   
   function generateOverallFeedback(evaluations) {
     // Analyze common patterns in feedback

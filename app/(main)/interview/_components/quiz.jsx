@@ -246,7 +246,7 @@ export default function Quiz({ mode = "mcq" }) {
   const finishInterview = async (finalAnswers, finalEvaluations) => {
     try {
       await saveQuizResultFn(quizData, finalAnswers, finalEvaluations);
-      toast.success("Interview completed! Redirecting to Interview Prep...");
+      toast.success("Interview completed! Redirecting to Interview Preparation page...");
       router.push("/interview");
     } catch (error) {
       console.error("Interview completion error:", error);
@@ -265,7 +265,7 @@ export default function Quiz({ mode = "mcq" }) {
     setResultData(null);
   };
 
-  // Cleanup on unmount
+  // Cleanup
   useEffect(() => {
     return () => {
       if (mediaRecorderRef.current && isRecording) {
