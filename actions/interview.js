@@ -261,82 +261,53 @@ export async function generateAIQuestion() {
   }
   
   export async function saveAIInterviewResult(questions, answers, evaluations) {
-    // Get the current user
-    const { userId } = await auth();
-    if (!userId) throw new Error("Unauthorized");
-  
-    const user = await db.user.findUnique({
-      where: { clerkUserId: userId },
-    });
-    if (!user) throw new Error("User not found");
-  
-    // Calculate overall, technical, and communication scores from evaluation metrics
-    const overallScore = evaluations.reduce((acc, ev) => acc + ev.score, 0) / evaluations.length;
-    const technicalScore = evaluations.reduce((acc, ev) => acc + (ev.technicalAccuracy || 0), 0) / evaluations.length;
-    const communicationScore = evaluations.reduce((acc, ev) => acc + (ev.communicationClarity || 0), 0) / evaluations.length;
-  
-    // Create an array to store detailed question results
-    const questionResults = questions.map((q, index) => ({
-      question: q.question,
-      type: q.type,
-      userAnswer: answers[index],
-      evaluation: {
-        // Use defaults if any key is missing
-        score: evaluations[index].score || 0,
-        technicalAccuracy: evaluations[index].technicalAccuracy || 0,
-        communicationClarity: evaluations[index].communicationClarity || 0,
-        completeness: evaluations[index].completeness || 0,
-        detailedFeedback: evaluations[index].detailedFeedback || "",
-        keyStrengths: evaluations[index].keyStrengths || [],
-        improvementAreas: evaluations[index].improvementAreas || [],
-        modelAnswer: evaluations[index].modelAnswer || ""
-      }
-    }));
-  
-    // Aggregate feedback: unique strengths and areas for improvement
-    const allStrengths = evaluations.flatMap(ev => ev.strengths || []);
-    const allAreasForImprovement = evaluations.flatMap(ev => ev.areasForImprovement || []);
-    const uniqueStrengths = [...new Set(allStrengths)].slice(0, 3);
-    const uniqueAreasForImprovement = [...new Set(allAreasForImprovement)].slice(0, 3);
-  
     try {
-      // Save the assessment record to the database.
+      console.log('Input data:', { questions, answers, evaluations });
+      
+      const { userId } = await auth();
+      if (!userId) throw new Error("Unauthorized");
+  
+      const user = await db.user.findUnique({
+        where: { clerkUserId: userId }
+      });
+      if (!user) throw new Error("User not found");
+  
+      const scores = evaluations.reduce((acc, ev) => ({
+        overall: acc.overall + (ev?.score || 0),
+        technical: acc.technical + (ev?.technicalAccuracy || 0),
+        communication: acc.communication + (ev?.communicationClarity || 0)
+      }), { overall: 0, technical: 0, communication: 0 });
+  
+      const count = evaluations.length;
+      const finalScores = {
+        overall: Math.round(scores.overall / count),
+        technical: Math.round(scores.technical / count),
+        communication: Math.round(scores.communication / count)
+      };
+  
+      console.log('Calculated scores:', finalScores);
+  
       const assessment = await db.assessment.create({
         data: {
           userId: user.id,
-          quizScore: overallScore,
-          technicalScore: technicalScore,   // Maps average technical accuracy to database column
-          communicationScore: communicationScore,
-          questions: questionResults,
+          quizScore: finalScores.overall,
+          technicalScore: finalScores.technical,
+          communicationScore: finalScores.communication,
+          questions: questions.map((q, i) => ({
+            question: q.question,
+            type: q.type,
+            userAnswer: answers[i],
+            evaluation: evaluations[i]
+          })),
           category: "AI Interview",
-          strengths: uniqueStrengths,
-          areasForImprovement: uniqueAreasForImprovement,
-          improvementTip: generateOverallFeedback(evaluations),
-        },
+          improvementTip: "Keep practicing and focusing on clear, detailed responses."
+        }
       });
   
+      console.log('Created assessment:', assessment);
       return assessment;
     } catch (error) {
-      console.error("Error saving interview result:", error);
-      throw new Error("Failed to save interview result");
+      console.error('Error in saveAIInterviewResult:', error);
+      throw error;
     }
-  }
-  
-  
-  function generateOverallFeedback(evaluations) {
-    // Analyze common patterns in feedback
-    const commonStrengths = findCommonPatterns(evaluations.flatMap(ev => ev.strengths));
-    const commonWeaknesses = findCommonPatterns(evaluations.flatMap(ev => ev.areasForImprovement));
-  
-    return `Strong in ${commonStrengths[0] || 'communication'}. Focus on improving ${commonWeaknesses[0] || 'specific examples'} for better responses.`;
-  }
-  
-  function findCommonPatterns(items) {
-    const frequency = {};
-    items.forEach(item => {
-      frequency[item] = (frequency[item] || 0) + 1;
-    });
-    return Object.entries(frequency)
-      .sort(([,a], [,b]) => b - a)
-      .map(([item]) => item);
   }

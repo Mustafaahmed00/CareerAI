@@ -177,28 +177,52 @@ export default function Quiz({ mode = "mcq" }) {
     }
   };
 
-  // Handle AI interview flow
-  const handleAINext = async () => {
+const handleAINext = async () => {
     if (!aiAnswer.trim()) return;
+    
     try {
+      console.log('Current state:', {
+        currentQuestion,
+        quizData,
+        evaluations,
+        answers
+      });
+      
       const evaluation = await evaluateAnswerFn(quizData[currentQuestion], aiAnswer);
+      console.log('New evaluation:', evaluation);
+      
       const newEvaluations = [...evaluations];
       newEvaluations[currentQuestion] = evaluation;
-      setEvaluations(newEvaluations);
-
+      
       const newAnswers = [...answers];
       newAnswers[currentQuestion] = aiAnswer;
-      setAnswers(newAnswers);
-
+  
       if (currentQuestion < quizData.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
+        setEvaluations(newEvaluations);
+        setAnswers(newAnswers);
         setAIAnswer("");
       } else {
-        await finishInterview(newAnswers, newEvaluations);
+        console.log('Saving final data:', {
+          quizData,
+          newAnswers,
+          newEvaluations
+        });
+        
+        const result = await saveQuizResultFn(quizData, newAnswers, newEvaluations);
+        console.log('Save result:', result);
+        
+        if (result) {
+          setResultData(result);
+          toast.success("Interview completed!");
+        } else {
+          console.error('No result received from saveQuizResultFn');
+          toast.error("Failed to save interview results");
+        }
       }
     } catch (error) {
-      console.error("AI evaluation error:", error);
-      toast.error("Failed to evaluate answer");
+      console.error("Error in handleAINext:", error);
+      toast.error(error.message || "Failed to process answer");
     }
   };
 
@@ -240,17 +264,6 @@ export default function Quiz({ mode = "mcq" }) {
     } catch (error) {
       console.error("Quiz completion error:", error);
       toast.error(error.message || "Failed to save quiz results");
-    }
-  };
-
-  const finishInterview = async (finalAnswers, finalEvaluations) => {
-    try {
-      await saveQuizResultFn(quizData, finalAnswers, finalEvaluations);
-      toast.success("Interview completed! Redirecting to Interview Preparation page...");
-      router.push("/interview");
-    } catch (error) {
-      console.error("Interview completion error:", error);
-      toast.error(error.message || "Failed to save interview results");
     }
   };
 
