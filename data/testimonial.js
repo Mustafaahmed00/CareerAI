@@ -1,52 +1,56 @@
 import React from 'react';
 
-export const testimonial = [
+const testimonials = [
   {
-    quote: "The AI-powered interview prep was a game-changer. Landed my dream job at a top tech company!",
-    author: "Sarah Chen",
-    image: "https://randomuser.me/api/portraits/women/75.jpg",
-    role: "Software Engineer",
-    company: "Tech Giant Co.",
+    quote: "CareerAI's resume analysis revealed gaps in my skills I hadn't noticed. The personalized learning recommendations helped me fill those gaps.",
+    author: "Alex Morgan",
+    role: "Data Scientist",
+    company: "AI Research Institute",
+    focus: "Skills Development"
   },
   {
-    quote: "The industry insights helped me pivot my career successfully. The salary data was spot-on!",
-    author: "Michael Rodriguez",
-    image: "https://randomuser.me/api/portraits/men/75.jpg",
-    role: "Product Manager",
-    company: "StartUp Inc.",
+    quote: "The mock interview practice helped me identify areas where I needed improvement. The real-time feedback was invaluable.",
+    author: "Jordan Lee",
+    role: "Backend Developer",
+    company: "Cloud Solutions",
+    focus: "Interview Preparation"
   },
   {
-    quote: "My resume's ATS score improved significantly. Got more interviews in two weeks than in six months!",
-    author: "Priya Patel",
-    image: "https://randomuser.me/api/portraits/women/74.jpg",
-    role: "Marketing Director",
-    company: "Global Corp",
-  },
+    quote: "The industry insights helped me understand which certifications would be most valuable for my career path.",
+    author: "Taylor Smith",
+    role: "DevOps Engineer",
+    company: "TechOps Inc",
+    focus: "Career Planning"
+  }
 ];
 
 export default function Testimonials() {
   return (
-    <section className="py-16">
+    <section className="py-16 bg-gradient-to-b from-white to-gray-50">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-12 text-black">
-          What Our Users Say
+          Success Stories
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonial.map((item, index) => (
-            <div key={index} className="bg-white/80 backdrop-blur-sm p-6 rounded-lg border shadow-sm">
-              <div className="flex items-center gap-4 mb-4">
-                <img
-                  src={item.image}
-                  alt={item.author}
-                  className="w-12 h-12 rounded-full object-cover"
-                />
-                <div>
-                  <h3 className="font-semibold text-black">{item.author}</h3>
-                  <p className="text-sm text-gray-600">{item.role} at {item.company}</p>
-                </div>
+          {testimonials.map((item, index) => (
+            <div 
+              key={index} 
+              className="bg-white p-6 rounded-xl border border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-300"
+            >
+              <div className="mb-4">
+                <span className="inline-block px-3 py-1 text-sm font-medium text-blue-600 bg-blue-50 rounded-full">
+                  {item.focus}
+                </span>
               </div>
-              <p className="text-black leading-relaxed">"{item.quote}"</p>
+              
+              <p className="text-gray-700 leading-relaxed mb-6">"{item.quote}"</p>
+              
+              <div className="border-t pt-4">
+                <h3 className="font-semibold text-black">{item.author}</h3>
+                <p className="text-sm text-gray-600">{item.role}</p>
+                <p className="text-sm text-gray-500">{item.company}</p>
+              </div>
             </div>
           ))}
         </div>

@@ -182,3 +182,10 @@ body {
 .testimonial-position {
   @apply text-[hsl(var(--muted-foreground))];
 }
+
+.gradient-title {
+  background: linear-gradient(180deg, #204279 0%, #0B2349 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+}

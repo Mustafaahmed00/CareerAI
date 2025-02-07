@@ -29,4 +29,14 @@ export const faqs = [
       answer:
         "Yes! While CareerAI generates high-quality initial content, you have full control to edit and customize all generated resumes, cover letters, and other content. Our markdown editor makes it easy to refine the content to perfectly match your needs.",
     },
-  ];
+    {
+        question: "How do I get the most out of AI interview practice?",
+        answer:
+          "For best results, treat AI interviews like real ones: dress professionally, use a quiet space, and speak clearly. Practice both typing and voice responses, as this helps improve both written and verbal communication. Review the detailed feedback after each answer, focusing on technical accuracy and communication scores. Use the suggested model answers as learning tools, not scripts to memorize.",
+      },
+      {
+        question: "What types of interview questions does CareerAI cover?",
+        answer:
+          "CareerAI provides a comprehensive mix of technical and behavioral questions tailored to your industry. This includes coding challenges for developers, case studies for consultants, situational questions for managers, and role-specific technical questions. Each response receives detailed feedback on both technical accuracy and communication effectiveness.",
+      },
+    ];
