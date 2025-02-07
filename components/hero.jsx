@@ -1,4 +1,3 @@
-// HeroSection.js
 "use client";
 import React, { useEffect, useRef } from "react";
 import Image from "next/image";
@@ -38,7 +37,7 @@ const HeroSection = () => {
     <section className="w-full pt-36 md:pt-48 pb-10">
       <div className="space-y-6 text-center">
         <div className="space-y-6 mx-auto">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl">
             <span className="gradient-title animate-gradient font-extrabold">
               Accelerate Your Career
             </span>

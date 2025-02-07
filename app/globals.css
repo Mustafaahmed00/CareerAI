@@ -189,3 +189,34 @@ body {
   -webkit-text-fill-color: transparent;
   font-weight: 800;
 }
+@media (max-width: 768px) {
+  .hero-image-wrapper {
+    perspective: none;  /* Remove perspective on mobile */
+    padding: 0 1rem;
+  }
+  
+  .hero-image {
+    transform: none !important;  /* Remove 3D effect on mobile */
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  
+  .hero-image.scrolled {
+    transform: translateY(20px) !important;  /* Simpler animation on mobile */
+  }
+  
+  .hero-image img {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .gradient-title {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    padding-bottom: 0.5rem;
+    line-height: 1.3;
+  }
+}
