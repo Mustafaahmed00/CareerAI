@@ -3,7 +3,7 @@
 Career AI Platform is a comprehensive, AI-powered solution designed to revolutionize career development. Built with cutting-edge technologies, the platform offers end-to-end support for professionals looking to advance their careers through intelligent tools and insights.
 
 ## 🚀 Live Demo
-[Insert Live Demo URL Here]
+https://career-ai-bay.vercel.app/
 
 ## ⚙️ Tech Stack
 - **Next.js** – React framework for server-side rendering and routing
