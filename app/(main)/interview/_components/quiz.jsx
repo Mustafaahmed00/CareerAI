@@ -24,19 +24,31 @@ import QuizResult from "./quiz-result";
 import useFetch from "@/hooks/use-fetch";
 import { BarLoader } from "react-spinners";
 import { Mic, MicOff } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-export default function Quiz({ mode = "mcq" }) { 
+// Helper function to convert Blob to Base64
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result.split(',')[1]); // Remove base64 prefix
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+export default function Quiz({ mode = "mcq" }) {
   // State management
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [showExplanation, setShowExplanation] = useState(false);
   const [aiAnswer, setAIAnswer] = useState("");
-  const [evaluations, setEvaluations] = useState([]); 
+  const [evaluations, setEvaluations] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
-
-  // Refs for recording
+  const [interimTranscript, setInterimTranscript] = useState('');
+  const [recordedChunks, setRecordedChunks] = useState([]);
+  
   const mediaRecorderRef = useRef(null);
-  const chunksRef = useRef([]);
+  const router = useRouter();
 
   // API hooks
   const {
@@ -57,117 +69,117 @@ export default function Quiz({ mode = "mcq" }) {
     fn: evaluateAnswerFn,
   } = useFetch(evaluateAIAnswer);
 
-  // Voice recording functions
-  // Update the voice recording functions in your Quiz component
+  // Start recording using MediaRecorder with real-time transcription
+  // Update these parts in your Quiz component
+
   const startRecording = async () => {
     try {
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            const recognition = new SpeechRecognition();
-
-            recognition.continuous = false;
-            recognition.interimResults = true;
-            recognition.lang = 'en-US';
-
-            recognition.onerror = (event) => {
-                console.error('Speech recognition error:', event.error);
-                setIsRecording(false);
-
-                let errorMessage = "An error occurred during speech recognition. Please try again.";
-
-                switch (event.error) {
-                    case 'network':
-                        errorMessage = "Network error. Would you like to try again?";
-                        toast.error(errorMessage, {
-                            action: {
-                                label: "Retry",
-                                onClick: () => {
-                                    startRecording();
-                                },
-                            },
-                        });
-                        return; // Important: Stop further processing in case of network error with retry
-                    case 'not-allowed':
-                    case 'permission-denied':
-                        errorMessage = "Microphone access was denied. Please ensure your browser has permission to use the microphone.";
-                        break;
-                    case 'no-speech':
-                        errorMessage = "No speech was detected. Please speak clearly into the microphone.";
-                        break;
-                    case 'audio-capture':
-                        errorMessage = "No microphone was detected. Please connect a microphone and try again.";
-                        break;
-                    default:
-                        // More specific error handling if needed
-                        errorMessage = `Speech recognition error: ${event.error}`;
-                }
-                toast.error(errorMessage);
-            };
-
-
-            recognition.onstart = () => {
-                setIsRecording(true);
-                toast.success("Recording started. Speak clearly into your microphone.");
-            };
-
-            recognition.onresult = (event) => {
-                let interimTranscript = '';
-                let finalTranscript = '';
-
-                for (let i = event.resultIndex; i < event.results.length; i++) {
-                    const transcript = event.results[i][0].transcript;
-                    if (event.results[i].isFinal) {
-                        finalTranscript += transcript;
-                    } else {
-                        interimTranscript += transcript;
-                    }
-                }
-
-                setAIAnswer(prev => {
-                    const newText = finalTranscript || interimTranscript;
-                    return prev ? `${prev} ${newText}` : newText;
-                });
-            };
-
-            recognition.onend = () => {
-                setIsRecording(false);
-                if (!mediaRecorderRef.current) { // Check if stopped due to error
-                    return;
-                }
-                toast.success("Recording stopped");
-            };
-
-            mediaRecorderRef.current = recognition;
-            recognition.start();
-        } else {
-            toast.error("Speech recognition is not supported in your browser. Please use Chrome or Edge.");
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          channelCount: 1,
+          sampleRate: 48000,
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        } 
+      });
+  
+      const mimeType = 'audio/webm;codecs=opus';
+      if (!MediaRecorder.isTypeSupported(mimeType)) {
+        toast.error('Browser does not support required audio format');
+        return;
+      }
+  
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType,
+        audioBitsPerSecond: 48000
+      });
+  
+      const chunks = []; // Store all chunks
+  
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) {
+          chunks.push(e.data);
         }
+      };
+  
+      // When recording stops, process the entire audio
+      mediaRecorder.onstop = async () => {
+        try {
+          // Create a unique ID for the loading toast
+          const loadingToastId = toast.loading('Converting speech to text...');
+          
+          const blob = new Blob(chunks, { type: mimeType });
+          const base64Audio = await blobToBase64(blob);
+          
+          const response = await fetch('/api/transcribe', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+              audio: base64Audio,
+              fullTranscription: true
+            }),
+          });
+  
+          if (!response.ok) {
+            // Dismiss the loading toast and show error
+            toast.dismiss(loadingToastId);
+            throw new Error('Transcription failed');
+          }
+  
+          const data = await response.json();
+          
+          // Dismiss the loading toast
+          toast.dismiss(loadingToastId);
+          
+          if (data.transcript) {
+            setAIAnswer(prev => {
+              const trimmedPrev = prev.trim();
+              const separator = trimmedPrev ? ' ' : '';
+              return trimmedPrev + separator + data.transcript.trim();
+            });
+            toast.success('Speech converted to text successfully!');
+          } else {
+            toast.error('No speech detected');
+          }
+        } catch (error) {
+          console.error('Transcription error:', error);
+          toast.error('Failed to convert speech to text');
+        }
+      };
+  
+      // Collect data in larger chunks
+      mediaRecorder.start(1000);
+      mediaRecorderRef.current = mediaRecorder;
+      setIsRecording(true);
+      toast.success('Recording started. Speak clearly.');
+  
     } catch (error) {
-        console.error('Speech recognition error:', error);
-        toast.error("Failed to start recording. Please try again or type your answer.");
-        setIsRecording(false);
-    }
-};
+        console.error('Error starting recording:', error);
+        if (error.name === 'NotAllowedError') {
+          toast.error('Microphone permission denied');
+        } else if (error.name === 'NotFoundError') {
+          toast.error('No microphone found');
+        } else {
+          toast.error('Failed to start recording: ' + error.message);
+        }
+      }
+    };
   
   const stopRecording = () => {
-    if (mediaRecorderRef.current) {
+    if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
-      mediaRecorderRef.current = null; // Clear the reference
-    }
-  };
-  
-  const toggleRecording = () => {
-    if (isRecording) {
-      stopRecording();
-    } else {
-      startRecording();
+      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+      mediaRecorderRef.current = null;
+      setIsRecording(false);
     }
   };
 
-  // Handle AI interview
+  // Handle AI interview flow
   const handleAINext = async () => {
     if (!aiAnswer.trim()) return;
-
     try {
       const evaluation = await evaluateAnswerFn(quizData[currentQuestion], aiAnswer);
       const newEvaluations = [...evaluations];
@@ -185,12 +197,12 @@ export default function Quiz({ mode = "mcq" }) {
         await finishInterview(newAnswers, newEvaluations);
       }
     } catch (error) {
-      console.error('AI evaluation error:', error);
+      console.error("AI evaluation error:", error);
       toast.error("Failed to evaluate answer");
     }
   };
 
-  // Handle quiz answers
+  // Handle quiz answers (for MCQ mode)
   const handleAnswer = (answer) => {
     const newAnswers = [...answers];
     newAnswers[currentQuestion] = answer;
@@ -202,7 +214,6 @@ export default function Quiz({ mode = "mcq" }) {
       handleAINext();
       return;
     }
-
     if (currentQuestion < quizData.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setShowExplanation(false);
@@ -227,7 +238,7 @@ export default function Quiz({ mode = "mcq" }) {
       await saveQuizResultFn(quizData, answers, score);
       toast.success("Quiz completed!");
     } catch (error) {
-      console.error('Quiz completion error:', error);
+      console.error("Quiz completion error:", error);
       toast.error(error.message || "Failed to save quiz results");
     }
   };
@@ -235,9 +246,10 @@ export default function Quiz({ mode = "mcq" }) {
   const finishInterview = async (finalAnswers, finalEvaluations) => {
     try {
       await saveQuizResultFn(quizData, finalAnswers, finalEvaluations);
-      toast.success("Interview completed!");
+      toast.success("Interview completed! Redirecting to Interview Prep...");
+      router.push("/interview");
     } catch (error) {
-      console.error('Interview completion error:', error);
+      console.error("Interview completion error:", error);
       toast.error(error.message || "Failed to save interview results");
     }
   };
@@ -248,11 +260,12 @@ export default function Quiz({ mode = "mcq" }) {
     setEvaluations([]);
     setShowExplanation(false);
     setAIAnswer("");
+    setInterimTranscript('');
     generateQuizFn();
     setResultData(null);
   };
 
-  // Cleanup
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (mediaRecorderRef.current && isRecording) {
@@ -268,12 +281,10 @@ export default function Quiz({ mode = "mcq" }) {
     }
   }, [quizData]);
 
-  // Loading state
   if (generatingQuiz) {
     return <BarLoader className="mt-4" width={"100%"} color="gray" />;
   }
 
-  // Show results if completed
   if (resultData) {
     return (
       <div className="mx-2">
@@ -282,7 +293,6 @@ export default function Quiz({ mode = "mcq" }) {
     );
   }
 
-  // Initial state
   if (!quizData) {
     return (
       <Card className="mx-2">
@@ -308,7 +318,6 @@ export default function Quiz({ mode = "mcq" }) {
     );
   }
 
-  // AI Interview mode
   if (mode === "ai") {
     return (
       <Card className="mx-2">
@@ -322,12 +331,21 @@ export default function Quiz({ mode = "mcq" }) {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-lg font-medium">{quizData[currentQuestion]?.question}</p>
-          <Textarea
-            value={aiAnswer}
-            onChange={(e) => setAIAnswer(e.target.value)}
-            placeholder="Type your answer here or use voice input..."
-            className="min-h-[120px]"
-          />
+          <div className="relative">
+            <Textarea
+              value={aiAnswer + (interimTranscript ? ` ${interimTranscript}` : '')}
+              onChange={(e) => setAIAnswer(e.target.value)}
+              placeholder="Type your answer here or use voice input..."
+              className="min-h-[120px]"
+            />
+            {interimTranscript && (
+              <div className="absolute bottom-2 right-2">
+                <span className="text-xs text-muted-foreground animate-pulse">
+                  Listening...
+                </span>
+              </div>
+            )}
+          </div>
           <div className="flex items-center justify-between gap-2">
             <p className="text-sm text-muted-foreground">
               {isRecording ? "Recording... Click mic to stop" : "Click mic to start recording"}
@@ -335,7 +353,7 @@ export default function Quiz({ mode = "mcq" }) {
             <Button 
               variant="outline" 
               size="icon"
-              onClick={toggleRecording}
+              onClick={() => isRecording ? stopRecording() : startRecording()}
               className={isRecording ? "bg-red-500/10 text-red-500 hover:bg-red-500/20" : ""}
             >
               {isRecording ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
@@ -364,7 +382,7 @@ export default function Quiz({ mode = "mcq" }) {
     );
   }
 
-  // MCQ Quiz mode
+  // MCQ Mode
   return (
     <Card className="mx-2">
       <CardHeader>

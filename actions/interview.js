@@ -209,23 +209,32 @@ export async function generateAIQuestion() {
     if (!userId) throw new Error("Unauthorized");
   
     const evaluationPrompt = `
-      You are an expert interviewer. Evaluate this interview answer for the following question:
+      You are an expert interviewer evaluating a candidate's response.
       
       Question: "${question.question}"
-      Answer: "${answer}"
-      
+      Candidate's Answer: "${answer}"
       Question Type: ${question.type}
-      Expected Key Points: ${question.keyPoints.join(", ")}
+      Key Points Expected: ${question.keyPoints.join(", ")}
       Evaluation Criteria: ${question.evaluationCriteria.join(", ")}
-      
-      Provide evaluation in this JSON format only:
+  
+      Provide a detailed evaluation in this exact JSON format:
       {
-        "score": number (0-10),
-        "feedback": "string (constructive feedback)",
-        "strengths": ["string"],
-        "areasForImprovement": ["string"],
-        "suggestedAnswer": "string (brief example of a strong answer)"
+        "score": A number from 0-100 representing overall quality,
+        "detailedFeedback": "Specific, constructive feedback about the answer",
+        "keyStrengths": ["List 2-3 specific strong points"],
+        "improvementAreas": ["List 2-3 specific areas to improve"],
+        "modelAnswer": "A concise example of an excellent answer",
+        "technicalAccuracy": A number from 0-100 for technical questions only,
+        "communicationClarity": A number from 0-100,
+        "completeness": A number from 0-100
       }
+  
+      When evaluating:
+      1. Consider both technical accuracy and communication clarity
+      2. Check if all key points were addressed
+      3. Assess the structure and completeness of the answer
+      4. Evaluate practical examples or experience mentioned
+      5. Consider the depth of technical understanding shown
     `;
   
     try {
@@ -233,7 +242,19 @@ export async function generateAIQuestion() {
       const response = result.response;
       const text = response.text();
       const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
-      return JSON.parse(cleanedText);
+      const evaluation = JSON.parse(cleanedText);
+  
+      // Ensure all required fields are present
+      return {
+        score: evaluation.score || 0,
+        feedback: evaluation.detailedFeedback || "No feedback provided",
+        strengths: evaluation.keyStrengths || [],
+        areasForImprovement: evaluation.improvementAreas || [],
+        suggestedAnswer: evaluation.modelAnswer || "No model answer provided",
+        technicalAccuracy: evaluation.technicalAccuracy || 0,
+        communicationClarity: evaluation.communicationClarity || 0,
+        completeness: evaluation.completeness || 0
+      };
     } catch (error) {
       console.error("Error evaluating answer:", error);
       throw new Error("Failed to evaluate answer");
@@ -250,44 +271,44 @@ export async function generateAIQuestion() {
   
     if (!user) throw new Error("User not found");
   
+    // Calculate detailed metrics
+    const overallScore = evaluations.reduce((acc, ev) => acc + ev.score, 0) / evaluations.length;
+    const technicalAccuracy = evaluations.reduce((acc, ev) => acc + (ev.technicalAccuracy || 0), 0) / evaluations.length;
+    const communicationScore = evaluations.reduce((acc, ev) => acc + (ev.communicationClarity || 0), 0) / evaluations.length;
+  
     const questionResults = questions.map((q, index) => ({
       question: q.question,
       type: q.type,
       userAnswer: answers[index],
-      evaluation: evaluations[index],
+      evaluation: {
+        ...evaluations[index],
+        score: evaluations[index].score || 0,
+        technicalAccuracy: evaluations[index].technicalAccuracy || 0,
+        communicationClarity: evaluations[index].communicationClarity || 0,
+        completeness: evaluations[index].completeness || 0
+      }
     }));
   
-    // Calculate average score
-    const averageScore = evaluations.reduce((acc, ev) => acc + ev.score, 0) / evaluations.length;
+    // Collect strengths and areas for improvement
+    const allStrengths = evaluations.flatMap(ev => ev.strengths || []);
+    const allAreasForImprovement = evaluations.flatMap(ev => ev.areasForImprovement || []);
   
-    // Generate overall improvement tip
-    const improvementPrompt = `
-      Based on these interview responses and evaluations:
-      ${questionResults.map(r => 
-        `Question: "${r.question}"
-         Areas for Improvement: ${r.evaluation.areasForImprovement.join(", ")}`
-      ).join("\n\n")}
-  
-      Provide a concise, encouraging improvement tip focusing on the key areas to work on.
-      Keep it under 2 sentences and make it actionable.
-    `;
-  
-    let improvementTip = null;
-    try {
-      const tipResult = await model.generateContent(improvementPrompt);
-      improvementTip = tipResult.response.text().trim();
-    } catch (error) {
-      console.error("Error generating improvement tip:", error);
-    }
+    // Get unique feedback points
+    const uniqueStrengths = [...new Set(allStrengths)].slice(0, 3);
+    const uniqueAreasForImprovement = [...new Set(allAreasForImprovement)].slice(0, 3);
   
     try {
       const assessment = await db.assessment.create({
         data: {
           userId: user.id,
-          quizScore: averageScore * 10, // Convert to percentage
+          quizScore: overallScore,
+          technicalScore: technicalAccuracy,
+          communicationScore: communicationScore,
           questions: questionResults,
           category: "AI Interview",
-          improvementTip,
+          strengths: uniqueStrengths,
+          areasForImprovement: uniqueAreasForImprovement,
+          improvementTip: generateOverallFeedback(evaluations),
         },
       });
   
@@ -296,4 +317,22 @@ export async function generateAIQuestion() {
       console.error("Error saving interview result:", error);
       throw new Error("Failed to save interview result");
     }
+  }
+  
+  function generateOverallFeedback(evaluations) {
+    // Analyze common patterns in feedback
+    const commonStrengths = findCommonPatterns(evaluations.flatMap(ev => ev.strengths));
+    const commonWeaknesses = findCommonPatterns(evaluations.flatMap(ev => ev.areasForImprovement));
+  
+    return `Strong in ${commonStrengths[0] || 'communication'}. Focus on improving ${commonWeaknesses[0] || 'specific examples'} for better responses.`;
+  }
+  
+  function findCommonPatterns(items) {
+    const frequency = {};
+    items.forEach(item => {
+      frequency[item] = (frequency[item] || 0) + 1;
+    });
+    return Object.entries(frequency)
+      .sort(([,a], [,b]) => b - a)
+      .map(([item]) => item);
   }
