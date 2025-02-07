@@ -1,39 +1,49 @@
-# Coming soon !!!
+# 🚀 Career AI Platform
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Career AI Platform is a comprehensive, AI-powered solution designed to revolutionize career development. Built with cutting-edge technologies, the platform offers end-to-end support for professionals looking to advance their careers through intelligent tools and insights.
 
-## Getting Started
+## 🚀 Live Demo
+[Insert Live Demo URL Here]
 
-First, run the development server:
+## ⚙️ Tech Stack
+- **Next.js** – React framework for server-side rendering and routing
+- **shadcn/ui** – Beautifully styled UI components
+- **Prisma** – Modern ORM for database operations
+- **Neon** – Serverless PostgreSQL database
+- **Clerk** – Authentication and user management
+- **Gemini API** – AI-powered content generation
+- **Google Cloud Speech-to-Text** – Interview preparation features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🔋 Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 📝 Resume Builder
+- Create professional resumes tailored to specific job roles
+- AI-powered content suggestions
+- Export in multiple formats (PDF, Word)
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### 💌 Cover Letter Generator
+- Personalized cover letters for any job application
+- Role-specific templates
+- Customizable content sections
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🔍 AI-Powered Career Insights
+- Real-time industry trend analysis
+- Career growth opportunity exploration
+- In-demand skill identification
 
-## Learn More
+### 🎤 Interview Preparation
+- AI-driven mock interview simulator
+- Behavioral and technical interview practice
+- Comprehensive performance feedback
+- Real-time communication clarity assessment
 
-To learn more about Next.js, take a look at the following resources:
+### 📊 Quizzes & Skill Assessments
+- Industry-specific knowledge tests
+- Detailed skill evaluation
+- Personalized improvement recommendations
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 📰 Industry Trends
+- Latest news and innovations tracking
+- Personalized career trend insights
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# CareerAI
+---
