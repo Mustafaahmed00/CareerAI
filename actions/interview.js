@@ -244,7 +244,6 @@ export async function generateAIQuestion() {
       const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
       const evaluation = JSON.parse(cleanedText);
   
-      // Ensure all required fields are present
       return {
         score: evaluation.score || 0,
         feedback: evaluation.detailedFeedback || "No feedback provided",
@@ -302,7 +301,6 @@ export async function generateAIQuestion() {
   
     try {
       // Save the assessment record to the database.
-      // Note: Make sure your Prisma schema has the technicalScore column.
       const assessment = await db.assessment.create({
         data: {
           userId: user.id,
