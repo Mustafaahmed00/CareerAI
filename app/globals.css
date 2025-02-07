@@ -91,13 +91,26 @@ body {
    Hero Section Effects
 ----------------------------------------------------- */
 .hero-image-wrapper {
-  perspective: 1200px;  /* Enhanced depth */
+  perspective: 1200px;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
 }
 
 .hero-image {
-  transform: rotateX(12deg) scale(1.02);  /* Subtle 3D effect */
+  transform: rotateX(12deg) scale(1.02);
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
+  width: 100%;
+}
+
+.hero-image img {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border-radius: 0.5rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .hero-image.scrolled {
@@ -184,39 +197,68 @@ body {
 }
 
 .gradient-title {
-  background: linear-gradient(180deg, #204279 0%, #0B2349 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  background: linear-gradient(180deg, #204279 0%, #0B2349 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
   font-weight: 800;
+  display: inline-block; /* This helps with the gradient */
 }
+
+/* Mobile Specific Fixes */
 @media (max-width: 768px) {
   .hero-image-wrapper {
-    perspective: none;  /* Remove perspective on mobile */
+    perspective: 1200px;  /* Keep the perspective */
     padding: 0 1rem;
+    overflow: hidden;  /* Prevent any overflow issues */
   }
   
   .hero-image {
-    transform: none !important;  /* Remove 3D effect on mobile */
-    max-width: 100%;
+    transform: rotateX(12deg) scale(1.02) !important;  /* Keep the 3D effect */
+    width: 100%;
     margin: 0 auto;
   }
   
   .hero-image.scrolled {
-    transform: translateY(20px) !important;  /* Simpler animation on mobile */
+    transform: rotateX(0deg) scale(1) translateY(40px) !important;
   }
   
-  .hero-image img {
-    width: 100%;
-    height: auto;
-    max-width: 100%;
-    margin: 0 auto;
+  .gradient-title {
+    font-size: 2.5rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    background: linear-gradient(180deg, #204279 0%, #0B2349 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+  }
+
+  section.w-full.pt-36.md\\:pt-48.pb-10 {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .space-y-6 {
+    margin-bottom: 2rem;
+  }
+  
+  .max-w-\\[600px\\] {
+    max-width: 100% !important;
+    padding: 0 1rem;
   }
 }
 
+/* Fix for testimonials section on mobile */
 @media (max-width: 768px) {
-  .gradient-title {
-    font-size: clamp(1.5rem, 5vw, 2rem);
-    padding-bottom: 0.5rem;
-    line-height: 1.3;
+  .grid.grid-cols-1.md\\:grid-cols-3.gap-8 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 0 1rem;
+  }
+
+  .testimonial-card {
+    margin-bottom: 1rem;
   }
 }
