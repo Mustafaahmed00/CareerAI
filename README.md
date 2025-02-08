@@ -9,14 +9,14 @@ https://career-ai-bay.vercel.app/
 - **Next.js** – React framework for server-side rendering and routing
 - **React/JSX** – JavaScript XML for component-based UI development
 - **JavaScript (.js)** – Core application logic
-- **TypeScript (.tsx/.ts)** – Optional type-safe JavaScript (recommended)
 - **shadcn/ui** – Beautifully styled UI components
 - **Prisma** – Modern ORM for database operations
 - **Neon** – Serverless PostgreSQL database
+- **Inngest** – Handles background tasks and scheduled processes
 - **Clerk** – Authentication and user management
 - **Gemini API** – AI-powered content generation
 - **Google Cloud Speech-to-Text** – Interview preparation features
-
+  
 ## 🔋 Features
 
 ### 📝 Resume Builder
