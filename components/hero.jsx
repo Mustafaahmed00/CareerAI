@@ -34,7 +34,7 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section className="w-full pt-36 md:pt-48 pb-10">
+    <section className="hero-section w-full pt-36 md:pt-48 pb-10">
       <div className="space-y-6 text-center">
         <div className="space-y-6 mx-auto">
           <h1 className="text-5xl md:text-6xl lg:text-7xl">
@@ -46,7 +46,7 @@ const HeroSection = () => {
               With AI-Powered Coaching
             </span>
           </h1>
-          <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl">
+          <p className="hero-text mx-auto max-w-[600px] text-muted-foreground md:text-xl">
             Master interviews, build confidence, and unlock your professional potential with personalized AI guidance.
           </p>
         </div>

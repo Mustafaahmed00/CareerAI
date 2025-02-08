@@ -208,13 +208,13 @@ body {
 /* Mobile Specific Fixes */
 @media (max-width: 768px) {
   .hero-image-wrapper {
-    perspective: 1200px;  /* Keep the perspective */
+    perspective: 1200px;
     padding: 0 1rem;
-    overflow: hidden;  /* Prevent any overflow issues */
+    overflow: hidden;
   }
   
   .hero-image {
-    transform: rotateX(12deg) scale(1.02) !important;  /* Keep the 3D effect */
+    transform: rotateX(12deg) scale(1.02) !important;
     width: 100%;
     margin: 0 auto;
   }
@@ -234,7 +234,8 @@ body {
     -webkit-text-fill-color: transparent !important;
   }
 
-  section.w-full.pt-36.md\\:pt-48.pb-10 {
+  /* Use a class-based selector instead of the complex one */
+  .hero-section {
     padding-top: 2rem;
     padding-bottom: 2rem;
   }
@@ -243,15 +244,13 @@ body {
     margin-bottom: 2rem;
   }
   
-  .max-w-\\[600px\\] {
+  .hero-text {
     max-width: 100% !important;
     padding: 0 1rem;
   }
-}
 
-/* Fix for testimonials section on mobile */
-@media (max-width: 768px) {
-  .grid.grid-cols-1.md\\:grid-cols-3.gap-8 {
+  /* Testimonials mobile fixes */
+  .testimonials-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1rem;
