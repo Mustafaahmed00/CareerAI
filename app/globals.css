@@ -199,29 +199,6 @@ html {
 /* --------------------------------------------------
    Testimonial Card Styling
 ----------------------------------------------------- */
-.testimonial-card {
-  @apply bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] backdrop-blur-sm;
-  border: 1px solid hsl(var(--border));
-  padding: 1.5rem;
-  border-radius: var(--radius);
-}
-
-.testimonial-text {
-  @apply text-[hsl(var(--foreground))] text-lg leading-relaxed;
-  opacity: 1; /* Changed from 0.9 to 1 for full visibility */
-  color: hsl(var(--foreground)); /* Explicit color definition */
-}
-
-.testimonial-author {
-  @apply text-[hsl(var(--primary))] font-medium;
-  color: hsl(var(--primary)); /* Explicit color definition */
-}
-
-.testimonial-position {
-  @apply text-[hsl(var(--muted-foreground))];
-  color: hsl(var(--muted-foreground)); /* Explicit color definition */
-}
-
 .gradient-title {
   background: linear-gradient(180deg, #204279 0%, #0B2349 100%) !important;
   -webkit-background-clip: text !important;
@@ -273,22 +250,5 @@ html {
   .hero-text {
     max-width: 100% !important;
     padding: 0 1rem;
-  }
-
-  /* Testimonials mobile fixes */
-  .testimonials-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    padding: 0 1rem;
-  }
-
-  .testimonial-card {
-    margin-bottom: 1rem;
-  }
-  .testimonial-text,
-  .testimonial-author,
-  .testimonial-position {
-    color: hsl(var(--foreground)) !important;
   }
 }
