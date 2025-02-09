@@ -1,6 +1,6 @@
 # 🚀 Career AI Platform
 
-Career AI Platform is a comprehensive, AI-powered solution designed to revolutionize career development. Built with cutting-edge technologies, the platform offers end-to-end support for professionals looking to advance their careers through intelligent tools and insights.
+CareerAI is your all-in-one career companion, powered by AI to help you take your professional journey to the next level. From crafting standout resumes to nailing interviews, we've built the tools you'd actually want to use. Get personalized feedback, practice with real industry scenarios, and stay ahead of the curve with insights that matter. Whether you're just starting out or looking to level up, CareerAI is here to help you make your next career move with confidence.
 
 ## 🚀 Live Demo
 https://career-ai-bay.vercel.app/
@@ -9,14 +9,14 @@ https://career-ai-bay.vercel.app/
 - **Next.js** – React framework for server-side rendering and routing
 - **React/JSX** – JavaScript XML for component-based UI development
 - **JavaScript (.js)** – Core application logic
-- **TypeScript (.tsx/.ts)** – Optional type-safe JavaScript (recommended)
 - **shadcn/ui** – Beautifully styled UI components
 - **Prisma** – Modern ORM for database operations
 - **Neon** – Serverless PostgreSQL database
+- **Inngest** – Handles background tasks and scheduled processes
 - **Clerk** – Authentication and user management
 - **Gemini API** – AI-powered content generation
 - **Google Cloud Speech-to-Text** – Interview preparation features
-
+  
 ## 🔋 Features
 
 ### 📝 Resume Builder
