@@ -61,7 +61,7 @@ const HeroSection = () => {
           <Button 
             size="lg" 
             variant="outline" 
-            className="px-8"
+            className="px-8 text-gray-900 hover:text-black hover:bg-gray-100 border-gray-300"
             onClick={() => window.open("https://www.linkedin.com/in/mustafa-ahmed002/", "_blank")}
           >
             Contact me

@@ -43,9 +43,9 @@ html {
 @layer base {
   :root {
     /* Light Mode (Default) */
-    --background: 0 0% 100%;              /* Pure White */
-    --foreground: 0 0% 10%;               /* Near Black */
-    --card: 0 0% 98%;                   /* Off-White Cards */
+    --background: 0 0% 100%;              
+    --foreground: 0 0% 10%;              
+    --card: 0 0% 98%;                   
     --card-foreground: 0 0% 10%;          /* Dark Text on Cards */
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 10%;
@@ -79,7 +79,6 @@ html {
 /* Gradient for backgrounds and text */
 @layer utilities {
   .gradient {
-    /* A vertical gradient from a light grey to a dark grey */
     @apply bg-gradient-to-b from-gray-100 to-gray-900;
   }
   
@@ -127,7 +126,7 @@ html {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #f9fafb; /* Slightly softer light grey */
+  background-color: #f9fafb; 
   background-image: 
     linear-gradient(
       to right,
@@ -196,9 +195,7 @@ html {
   }
 }
 
-/* --------------------------------------------------
-   Testimonial Card Styling
------------------------------------------------------ */
+
 .gradient-title {
   background: linear-gradient(180deg, #204279 0%, #0B2349 100%) !important;
   -webkit-background-clip: text !important;
@@ -261,6 +258,10 @@ html {
   color: #6b7280;
 }
 
+.text-muted-foreground {
+  color: #4b5563;
+}
+
 /* Mobile Specific Fixes */
 @media (max-width: 768px) {
   .hero-image-wrapper {
@@ -290,7 +291,6 @@ html {
     -webkit-text-fill-color: transparent !important;
   }
 
-  /* Use a class-based selector instead of the complex one */
   .hero-section {
     padding-top: 2rem;
     padding-bottom: 2rem;
