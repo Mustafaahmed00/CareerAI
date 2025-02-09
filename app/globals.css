@@ -208,15 +208,18 @@ html {
 
 .testimonial-text {
   @apply text-[hsl(var(--foreground))] text-lg leading-relaxed;
-  opacity: 0.9;
+  opacity: 1; /* Changed from 0.9 to 1 for full visibility */
+  color: hsl(var(--foreground)); /* Explicit color definition */
 }
 
 .testimonial-author {
   @apply text-[hsl(var(--primary))] font-medium;
+  color: hsl(var(--primary)); /* Explicit color definition */
 }
 
 .testimonial-position {
   @apply text-[hsl(var(--muted-foreground))];
+  color: hsl(var(--muted-foreground)); /* Explicit color definition */
 }
 
 .gradient-title {
@@ -282,5 +285,10 @@ html {
 
   .testimonial-card {
     margin-bottom: 1rem;
+  }
+  .testimonial-text,
+  .testimonial-author,
+  .testimonial-position {
+    color: hsl(var(--foreground)) !important;
   }
 }

@@ -25,31 +25,39 @@ const testimonials = [
 ];
 
 export default function Testimonials() {
-    return (
-        <section className="w-full py-12 md:py-24 bg-muted/50">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12 text-black">
-              Success Stories
-            </h2>
+  return (
+    <section className="w-full py-12 md:py-24 bg-muted/50">
+      <div className="container mx-auto px-4">
+        <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
+          Success Stories
+        </h2>
         
-            <div className="testimonials-grid grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="testimonials-grid grid grid-cols-1 md:grid-cols-3 gap-8">
           {testimonials.map((item, index) => (
-            <div 
-              key={index} 
-              className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-100 dark:border-gray-700"
+            <div
+              key={index}
+              className="bg-white rounded-lg p-6 shadow-sm border border-gray-200"
             >
               <div className="mb-4">
-              <span className="inline-block px-3 py-1 text-base font-semibold text-black rounded-full bg-blue-50">
+                <span className="inline-block px-3 py-1 text-base font-semibold text-blue-800 rounded-full bg-blue-50">
                   {item.focus}
                 </span>
               </div>
               
-              <p className="text-gray-700 leading-relaxed mb-6">"{item.quote}"</p>
+              <p className="text-gray-800 leading-relaxed mb-6">
+                "{item.quote}"
+              </p>
               
               <div className="border-t pt-4">
-                <h3 className="font-semibold text-black">{item.author}</h3>
-                <p className="text-sm text-gray-600">{item.role}</p>
-                <p className="text-sm text-gray-500">{item.company}</p>
+                <h3 className="font-semibold text-gray-900">
+                  {item.author}
+                </h3>
+                <p className="text-sm text-gray-700">
+                  {item.role}
+                </p>
+                <p className="text-sm text-gray-600">
+                  {item.company}
+                </p>
               </div>
             </div>
           ))}
