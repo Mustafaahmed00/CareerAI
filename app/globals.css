@@ -208,6 +208,59 @@ html {
   display: inline-block; /* This helps with the gradient */
 }
 
+/* Testimonials Styles */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .testimonials-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.testimonial-card {
+  background-color: white;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
+}
+
+.testimonial-focus {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e40af;
+  background-color: #dbeafe;
+  border-radius: 9999px;
+  margin-bottom: 1rem;
+}
+
+.testimonial-quote {
+  color: #374151;
+  line-height: 1.625;
+  margin-bottom: 1.5rem;
+}
+
+.testimonial-author {
+  font-weight: 600;
+  color: #111827;
+}
+
+.testimonial-role {
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.testimonial-company {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
 /* Mobile Specific Fixes */
 @media (max-width: 768px) {
   .hero-image-wrapper {
