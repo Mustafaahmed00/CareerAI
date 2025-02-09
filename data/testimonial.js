@@ -39,7 +39,7 @@ export default function Testimonials() {
               className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-100 dark:border-gray-700"
             >
               <div className="mb-4">
-                <span className="inline-block px-3 py-1 text-sm font-medium text-blue-600 bg-blue-50 rounded-full">
+              <span className="inline-block px-3 py-1 text-base font-semibold text-black rounded-full bg-blue-50">
                   {item.focus}
                 </span>
               </div>

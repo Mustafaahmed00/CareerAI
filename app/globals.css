@@ -2,9 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Global Base Styles */
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  letter-spacing: -0.02em;
+}
+
+h1, h2, h3 {
+  font-family: 'Merriweather', serif;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+/* Button Hover Effect */
+.btn {
+  transition: all 0.3s ease-in-out;
+  transform: translateY(0);
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08);
+}
+
+/* Smooth Scroll */
+html {
+  scroll-behavior: smooth;
 }
 
 /* --------------------------------------------------
@@ -38,35 +68,6 @@ body {
     --chart-3: 0 0% 60%;
     --chart-4: 0 0% 80%;
     --chart-5: 0 0% 50%;
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    /* Dark Mode */
-    --background: 0 0% 10%;             /* Near Black */
-    --foreground: 0 0% 90%;             /* Near White */
-    --card: 0 0% 15%;                 /* Dark Cards */
-    --card-foreground: 0 0% 90%;          /* Light Text on Cards */
-    --popover: 0 0% 15%;
-    --popover-foreground: 0 0% 90%;
-    --primary: 0 0% 100%;               /* Pure White */
-    --primary-foreground: 0 0% 10%;        /* Dark Text on Primary */
-    --secondary: 0 0% 20%;              /* Dark Grey */
-    --secondary-foreground: 0 0% 90%;
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 70%;
-    --accent: 0 0% 100%;
-    --accent-foreground: 0 0% 10%;
-    --destructive: 0 0% 30%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 40%;
-    --input: 0 0% 30%;
-    --ring: 0 0% 90%;
-    --chart-1: 0 0% 30%;
-    --chart-2: 0 0% 50%;
-    --chart-3: 0 0% 70%;
-    --chart-4: 0 0% 90%;
-    --chart-5: 0 0% 60%;
     --radius: 0.5rem;
   }
 }
@@ -126,21 +127,22 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  /* Light mode: Subtle black grid lines on white */
-  background: linear-gradient(
+  background-color: #f9fafb; /* Slightly softer light grey */
+  background-image: 
+    linear-gradient(
       to right,
-      rgba(0, 0, 0, 0.05) 1px,
+      rgba(0, 0, 0, 0.05)1px,
       transparent 1px
     ),
     linear-gradient(
       to bottom,
-      rgba(0, 0, 0, 0.05) 1px,
+      rgba(0, 0, 0, 0.05)1px,
       transparent 1px
     );
   background-size: 40px 40px;
   pointer-events: none;
-  z-index: 0;
-  animation: gridFloat 20s ease-in-out infinite;
+  z-index: -1;
+  opacity: 1.4;
 }
 
 .grid-background::before {
@@ -150,12 +152,33 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  /* A soft radial vignette to add depth */
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(0, 0, 0, 0.05),
-    rgba(0, 0, 0, 0.2)
-  );
+  background: 
+    linear-gradient(
+      135deg, 
+      rgba(240, 249, 255, 0.5), 
+      rgba(240, 249, 255, 0.2)
+    );
+  mix-blend-mode: overlay;
+}
+
+.grid-background::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(
+      circle at 100% 0%, 
+      rgba(173, 216, 230, 0.1), 
+      transparent 20%
+    ),
+    radial-gradient(
+      circle at 0% 100%, 
+      rgba(135, 206, 250, 0.1), 
+      transparent 20%
+    );
 }
 
 /* --------------------------------------------------

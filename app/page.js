@@ -140,17 +140,17 @@ export default async function LandingPage() {
       <Accordion type="single" collapsible className="w-full">
         {faqs.map((faq, index) => (
           <AccordionItem 
-            key={index} 
-            value={`item-${index}`}
-            className="bg-white mb-2 rounded-lg border border-gray-100"
-          >
-            <AccordionTrigger className="text-left px-4 hover:bg-gray-50 transition-colors duration-200">
-              {faq.question}
-            </AccordionTrigger>
-            <AccordionContent className="px-4 text-muted-foreground">
-              {faq.answer}
-            </AccordionContent>
-          </AccordionItem>
+          key={index} 
+          value={`item-${index}`}
+          className="bg-white mb-2 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200"
+        >
+          <AccordionTrigger className="text-left px-4 hover:bg-gray-50 transition-colors duration-200 font-medium">
+            {faq.question}
+          </AccordionTrigger>
+          <AccordionContent className="px-4 text-gray-600">
+            {faq.answer}
+          </AccordionContent>
+        </AccordionItem>
         ))}
       </Accordion>
       </div>

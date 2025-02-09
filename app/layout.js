@@ -1,4 +1,4 @@
-import { Inter } from "next/font/google";
+import { Inter, Merriweather } from 'next/font/google';
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
@@ -7,7 +7,17 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { dark } from "@clerk/themes";
 import Link from "next/link";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  weight: ['400', '600', '800']
+});
+
+const merriweather = Merriweather({
+  subsets: ['latin'],
+  variable: '--font-merriweather',
+  weight: ['700']
+});
 
 export const metadata = {
   title: "AI Career Coach",
@@ -37,8 +47,8 @@ export default function RootLayout({ children }) {
               <div className="container mx-auto px-4">
                 <div className="flex flex-col items-center justify-center space-y-4">
                   <p className="text-muted-foreground transition-colors hover:text-primary">
-                    <Link 
-                      href="https://www.linkedin.com/in/mustafa-ahmed002" 
+                    <Link
+                      href="https://www.linkedin.com/in/mustafa-ahmed002"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center space-x-2 hover:text-primary transition-all duration-200 ease-in-out group"
